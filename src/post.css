@@ -1,0 +1,17 @@
+.post__body {
+  display: flex;
+}
+
+.post__footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.post__header {
+  display: flex;
+}
+
+.post__content {
+  display: flex;
+  flex-direction: column;
+}

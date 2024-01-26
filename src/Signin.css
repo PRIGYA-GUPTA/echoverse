@@ -1,0 +1,164 @@
+.maindivsign {
+  position: relative;
+  height: 80rem;
+  width: 100%;
+}
+
+.maindivsign::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  filter: brightness(40%);
+  z-index: -1;
+}
+
+.signincon {
+  width: 440px;
+  background-color: #000000b5;
+  margin: auto;
+  color: #fff;
+  height: 41rem;
+
+  border-radius: 5px;
+}
+
+.sign {
+  padding-top: 0.1px;
+}
+
+.signdiv {
+  padding-top: 60px;
+  padding-left: 55px;
+  padding-right: 76px;
+
+  height: 20rem;
+}
+.error {
+  font-weight: bold;
+  font-size: 0.875rem;
+  color: var(--twitter-color) !important;
+  text-align: center;
+}
+
+.email1 {
+  background: transparent;
+  line-height: 16px;
+  width: 19rem;
+  height: 56px;
+  font-size: 16px;
+  color: #ffffff;
+  margin-top: 5px;
+  /* margin-left: 467px; */
+  border: 0.5px solid;
+  border-radius: 4px;
+}
+
+.divsign1 {
+  background-color: var(--twitter-color) !important;
+  border-radius: 4px;
+  line-height: 24px;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  width: 328px;
+  margin-top: 20px;
+}
+
+.divsign1:hover {
+  background-color: #a7161d;
+}
+
+.signbutton {
+  transition: 100ms;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: var(--twitter-color) !important;
+  border-radius: 4px;
+  line-height: 24px;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  width: 19rem;
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.signbutton:disabled {
+  background-color: gray !important;
+}
+
+.signbutton:hover {
+  background-color: #a7161d;
+}
+
+.signin1 {
+  font-size: 14px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  border-color: #df2e37;
+}
+
+.checkdiv {
+  color: #ffffff78;
+}
+
+.checkRem {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.netdiv {
+  display: flex;
+  padding-top: 40px;
+}
+
+.Spandiv {
+  font-size: 14px;
+}
+
+.footer1 {
+  background-color: #000000b5;
+  color: #ffffff9e;
+  height: 24rem;
+}
+
+.container1 {
+  padding-top: 6rem;
+  margin-top: 8rem;
+  padding-left: 5rem;
+}
+.eng-wrapper1 {
+  display: flex;
+}
+
+/* Footer.css */
+
+.eng-wrapper1 .sec1 {
+  margin-top: 0px;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  /* CSS rules for extra small devices */
+  .signincon {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 432px) {
+  .email1 {
+    width: 17rem;
+  }
+
+  .signbutton {
+    width: 17rem;
+  }
+}
