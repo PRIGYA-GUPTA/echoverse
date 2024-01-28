@@ -1,0 +1,46 @@
+.main_container {
+  align-items: center;
+
+  display: flex;
+  justify-content: space-around;
+}
+.img_cont {
+  margin-top: 15rem;
+}
+.mainimg {
+  width: 25rem;
+}
+
+.main_head {
+  font-size: 4rem;
+}
+
+.main_content {
+  margin-top: 10rem;
+}
+
+.main_btn {
+  background-color: var(--twitter-color) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 900 !important;
+  text-transform: inherit !important;
+  border-radius: 30px !important;
+  height: 50px !important;
+  margin-top: 20px !important;
+  width: 18rem;
+}
+
+@media only screen and (max-width: 942px) {
+  .main_container {
+    flex-direction: column;
+  }
+
+  .img_cont {
+    margin-right: 8rem;
+  }
+
+  .main_content {
+    margin-left: 8rem;
+  }
+}

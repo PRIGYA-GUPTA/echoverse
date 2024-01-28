@@ -3,6 +3,7 @@ import TweetBox from "./TweetBox";
 import Post from "./Post";
 import { v4 } from "uuid";
 import { imgDB, txtDB } from "./firebase";
+import { onSnapshot } from "firebase/firestore";
 import {
   addDoc,
   collection,
@@ -50,13 +51,32 @@ function Feed({ values, setValues, selectedImage, setSelectedImage, avatar }) {
     const dataDb = await getDocs(valRef);
     const allData = dataDb.docs.map((val) => ({ ...val.data(), id: val.id }));
     setData(allData);
-    console.log(dataDb);
+    // console.log(dataDb);
   };
 
   useEffect(() => {
     getData();
   }, []);
-  console.log(data, "datadata");
+
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     const valRef = collection(txtDB, "txtData");
+
+  //     // Set up a real-time listener
+  //     const unsubscribe = onSnapshot(valRef, (snapshot) => {
+  //       const allData = snapshot.docs.map((val) => ({
+  //         ...val.data(),
+  //         id: val.id,
+  //       }));
+  //       setData(allData);
+  //     });
+
+  //     // Cleanup the listener when the component is unmounted
+  //     return () => unsubscribe();
+  //   };
+
+  //   getData();
+  // }, []);
 
   return (
     <div className="feed">
@@ -76,6 +96,7 @@ function Feed({ values, setValues, selectedImage, setSelectedImage, avatar }) {
 
       {data.map((post) => (
         <Post
+          key={post.id}
           displayname={post.displayname}
           username={post.username}
           verified={post.verified}

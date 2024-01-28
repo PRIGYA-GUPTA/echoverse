@@ -33,7 +33,7 @@ function Post({ displayname, username, verified, text, image, avatar }) {
         </div>
       </div>
       <div>
-        <img src={image} height="400px" width="600px"></img>
+        {image && <img src={image} height="400px" width="600px"></img>}
         <div className="post__footer">
           <ChatBubbleOutlineIcon fontSize="small" />
           <RepeatIcon fontSize="small" />

@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import React, { useContext } from "react";
-
+import { AuthContext } from "./AuthContext";
+import logo from "./evLogo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { query, collection, where, getDocs } from "firebase/firestore";
+import { txtDB } from "./firebase"; // Import your Firestore instance
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -13,28 +17,76 @@ import "./Signin.css";
 
 function SignIn({ selectedImage, setSelectedImage, values, setValues }) {
   const location = useLocation();
+  const { setIsAuthenticated } = useContext(AuthContext);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const email = location.state?.email || "";
-  console.log(`Received email: ${email}`);
+
   const navigate = useNavigate();
   const handleSubmit = () => {
     console.log(values.email);
 
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then(async (res) => {
-        navigate("/");
+        setIsAuthenticated(true);
+        navigate("/home");
       })
       .catch((err) => {
-        console.log(err);
+        setErrorMsg(err.message);
+        // console.log(err);
       });
   };
+
+  // const handleSubmit = async () => {
+  //   try {
+  //     const res = await signInWithEmailAndPassword(
+  //       auth,
+  //       values.email,
+  //       values.password
+  //     );
+  //     const user = res.user;
+
+  //     // Fetch additional user data from Firestore based on email
+  //     const userQuery = query(
+  //       collection(txtDB, "users"),
+  //       where("email", "==", values.email)
+  //     );
+  //     const userSnapshot = await getDocs(userQuery);
+
+  //     if (userSnapshot.size > 0) {
+  //       // Assuming there's only one user with a given email
+  //       const userData = userSnapshot.docs[0].data();
+  //       console.log("User Data from Firestore:", userData);
+
+  //       // You can set the user data in your state or context for further use
+  //       // For example, if using React state:
+  //       setValues((prev) => ({
+  //         ...prev,
+  //         username: userData.username,
+  //         displayname: userData.displayname,
+  //         avatar: userData.avatar,
+  //       }));
+  //     }
+
+  //     navigate("/");
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
   return (
-    <>
+    <div className="maindivsign">
+      <img
+        src={logo}
+        className="sidebar__evIcon"
+        style={{ marginTop: "1rem" }}
+      ></img>
       <div className="sign">
         <div className="signincon">
           <div className="signdiv">
             <h1>Sign In</h1>
-
+            <br></br>
+            <label>Email</label>
+            <br></br>
             <input
               type="email"
               className="email1"
@@ -44,6 +96,9 @@ function SignIn({ selectedImage, setSelectedImage, values, setValues }) {
                 setValues((prev) => ({ ...prev, email: e.target.value }))
               }
             ></input>
+            <br></br>
+            <label>Password</label>
+            <br></br>
             <input
               type="password"
               className="email1"
@@ -52,6 +107,9 @@ function SignIn({ selectedImage, setSelectedImage, values, setValues }) {
                 setValues((prev) => ({ ...prev, password: e.target.value }))
               }
             ></input>
+            <span style={{ color: "red" }}>
+              {errorMsg ? <span>{errorMsg}</span> : " "}
+            </span>
             {/* {selectedImage && (
               <div>
                 <img
@@ -106,21 +164,17 @@ function SignIn({ selectedImage, setSelectedImage, values, setValues }) {
                 </div>
               </div>
               <div className="netdiv">
-                <p>New to Netflix? </p>
+                <p>New to EchoVerse? </p>
+                <Link to="/signup" style={{ color: "white" }}>
+                  SignUp Now
+                </Link>
                 <p style={{ color: "#fff" }}></p>
-              </div>
-              <div className="Spandiv">
-                <span>
-                  This page is protected by Google reCAPTCHA to ensure you're
-                  not a bot.
-                </span>
-                <a href="#"> Learn more.</a>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

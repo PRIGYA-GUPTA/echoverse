@@ -2,26 +2,81 @@ import { useState } from "react";
 import "./Signin.css";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
-
+import logo from "./evLogo.png";
 import { imgDB, txtDB, auth } from "./firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore"; // Ensure you import these functions
 
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function SignUp({ values, setValues, setAvatar, avatar }) {
+  const [errorMsg, setErrorMsg] = useState(null);
   const navigate = useNavigate();
+
+  // const handleSubmission = async () => {
+  //   try {
+  //     const res = await createUserWithEmailAndPassword(
+  //       auth,
+  //       values.email,
+  //       values.password
+  //     );
+  //     const user = res.user;
+
+  //     // Update user profile with additional information
+  //     await updateProfile(user, {
+  //       displayName: values.displayname,
+  //       photoURL: avatar,
+  //     });
+
+  //     // Save additional user information to Firestore
+  //     const userRef = collection(txtDB, "users"); // Reference to the 'users' collection
+  //     await addDoc(userRef, {
+  //       userId: user.uid,
+  //       email: values.email,
+  //       username: values.username,
+  //       displayname: values.displayname,
+  //       avatar: avatar,
+  //     });
+
+  //     navigate("/signin");
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };//baad
   const handleSubmission = () => {
+    console.log(values.username, values.displayname, avatar);
+    if (!values.username || !values.displayname || !avatar) {
+      setErrorMsg("Please fill all the fields");
+      return; // Do not proceed with signup if any field is empty
+    }
     createUserWithEmailAndPassword(auth, values.email, values.password)
       .then(async (res) => {
         const user = res.user;
         await updateProfile(user, {
-          displayName: values.name,
+          displayName: values.displayname,
         });
+
+        handleClick();
+
         navigate("/signin");
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        // Reset error message to null after signing up (success or failure)
+        setErrorMsg(null);
+        setAvatar(null);
+        setValues((prev) => ({
+          ...prev,
+          username: null,
+          displayname: null,
+        }));
       });
+
+    // } else {
+    //   setErrorMsg("Please fill all the fields");
+    // }
   };
   const handleUpload = (e, type) => {
     const file = e.target.files[0];
@@ -35,8 +90,24 @@ function SignUp({ values, setValues, setAvatar, avatar }) {
       });
     });
   };
+
+  const handleClick = async () => {
+    const valRef = collection(txtDB, "users");
+    await addDoc(valRef, {
+      email: values.email,
+      displayname: values.displayname,
+      username: values.username,
+      avatarURL: avatar,
+    });
+  };
+
   return (
     <div className="maindivsign">
+      <img
+        src={logo}
+        className="sidebar__evIcon"
+        style={{ marginTop: "1rem" }}
+      ></img>
       <div className="sign">
         <div className="signincon">
           <div className="signdiv">
@@ -44,7 +115,7 @@ function SignUp({ values, setValues, setAvatar, avatar }) {
             <label>User Name</label>
             <br></br>
             <input
-              type="name"
+              type="text"
               className="email1"
               placeholder="Enter your name"
               onChange={(e) =>
@@ -53,14 +124,13 @@ function SignUp({ values, setValues, setAvatar, avatar }) {
                   username: e.target.value,
                 }))
               }
+              required
             ></input>
-
             <br></br>
-
             <label>Display Name</label>
             <br></br>
             <input
-              type="name"
+              type="text"
               className="email1"
               placeholder="Enter your display name"
               onChange={(e) =>
@@ -69,8 +139,9 @@ function SignUp({ values, setValues, setAvatar, avatar }) {
                   displayname: e.target.value,
                 }))
               }
+              required
             ></input>
-
+            <br></br>
             <label>Email</label>
             <br></br>
             <input
@@ -82,7 +153,6 @@ function SignUp({ values, setValues, setAvatar, avatar }) {
               }
             ></input>
             <br></br>
-
             <label>Password</label>
             <br></br>
             <input
@@ -98,9 +168,9 @@ function SignUp({ values, setValues, setAvatar, avatar }) {
             <br />
             <input type="file" onChange={(e) => handleUpload(e, "avatar")} />
             <br />
-
-            <b className="error"></b>
-
+            <span style={{ color: "red" }}>
+              {errorMsg ? <span>{errorMsg}</span> : " "}
+            </span>
             <button
               className="signbutton"
               type="submit"
@@ -108,9 +178,11 @@ function SignUp({ values, setValues, setAvatar, avatar }) {
             >
               Signup
             </button>
-
             <p style={{ color: "#fff", marginTop: "10px" }}>
-              Already have an account
+              Already have an account?
+              <Link to="/signin" style={{ color: "white" }}>
+                SignIn Now
+              </Link>
             </p>
           </div>
         </div>
