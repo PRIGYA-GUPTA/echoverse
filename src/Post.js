@@ -28,7 +28,7 @@ function Post({ displayname, username, verified, text, image, avatar }) {
             </div>
           </div>
           <div>
-            <p>{text}</p>
+            <p className="post_text">{text}</p>
           </div>
         </div>
       </div>

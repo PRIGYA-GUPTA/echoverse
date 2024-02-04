@@ -1,22 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import logo from "./evLogo.png";
+import { AuthContext } from "./AuthContext";
 import { auth } from "./firebase";
 import "./Signin.css";
 
 function SignIn() {
   const [err, setErr] = useState(false);
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(auth.currentUser);
+    // console.log(auth.currentUser);
     const email = e.target[0].value;
     const password = e.target[1].value;
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      setIsAuthenticated(true);
       navigate("/home");
     } catch (err) {
       setErr(true);

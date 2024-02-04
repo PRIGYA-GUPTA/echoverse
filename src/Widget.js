@@ -1,8 +1,3 @@
-import {
-  TwitterTimelineEmbed,
-  TwitterShareButton,
-  TwitterTweetEmbed,
-} from "react-twitter-embed";
 import Microlink from "@microlink/react";
 import SearchIcon from "@mui/icons-material/Search";
 import "./widget.css";

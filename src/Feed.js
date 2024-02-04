@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { auth, db } from "./firebase";
 import { storage } from "./firebase";
 import { Avatar } from "@mui/material";
@@ -15,7 +15,7 @@ function Feed() {
   const [text, setText] = useState("");
   const [disImage, setDisImage] = useState("");
   const [posts, setPosts] = useState([]);
-  const [data, setData] = useState([]);
+
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function Feed() {
         storage,
         `${auth.currentUser.displayName + randomId}`
       );
-      console.log(storageRef);
+      // console.log(storageRef);
 
       await uploadBytesResumable(storageRef, disImage).then(() => {
         getDownloadURL(storageRef).then(async (downloadURL) => {
@@ -45,16 +45,16 @@ function Feed() {
             if (fileInputRef.current) {
               fileInputRef.current.value = "";
             }
-            console.log("Document written with ID: ", docRef.id);
+            // console.log("Document written with ID: ", docRef.id);
 
             fetchData();
           } catch (err) {
-            console.log(err);
+            // console.log(err);
           }
         });
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 
@@ -65,10 +65,10 @@ function Feed() {
       ...doc.data(),
     }));
 
-    console.log(postArray);
+    // console.log(postArray);
 
     const userIds = [...new Set(postArray.map((post) => post.userId))];
-    console.log("userIds:", userIds);
+    // console.log("userIds:", userIds);
 
     const userDataPromises = userIds.map(async (userId) => {
       const userSnapshot = await getDoc(doc(db, "users", userId));
@@ -77,7 +77,7 @@ function Feed() {
 
     const userDataArray = await Promise.all(userDataPromises);
 
-    console.log(userDataArray);
+    // console.log(userDataArray);
 
     const postsWithUserData = postArray.map((post) => {
       const userData = userDataArray.find(
@@ -89,7 +89,7 @@ function Feed() {
       };
     });
 
-    console.log(postsWithUserData, "i am postswithuser");
+    // console.log(postsWithUserData, "i am postswithuser");
     setPosts(postsWithUserData);
   };
 

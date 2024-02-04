@@ -7,7 +7,7 @@ import SignUp from "./Signup";
 import Widget from "./Widget";
 import { AuthProvider } from "./AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Main from "./Main";
 
 function App() {
