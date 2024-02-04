@@ -11,14 +11,14 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDKn1x1SYIvg68fJVXNvz6qldcC59kX2dg",
-  authDomain: "echoverse-2cfea.firebaseapp.com",
-  databaseURL: "https://echoverse-2cfea-default-rtdb.firebaseio.com",
-  projectId: "echoverse-2cfea",
-  storageBucket: "echoverse-2cfea.appspot.com",
-  messagingSenderId: "510998338572",
-  appId: "1:510998338572:web:60ba74ff591d92c99b6229",
-  measurementId: "G-6955C3V798",
+  apiKey: 
+  authDomain: 
+  databaseURL: 
+  projectId: 
+  storageBucket: 
+  messagingSenderId: 
+  appId: "1:510998338572:web:
+  measurementId:,
 };
 
 // Initialize Firebase
