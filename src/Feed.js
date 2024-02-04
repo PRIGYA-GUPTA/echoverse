@@ -132,7 +132,7 @@ function Feed() {
         </form>
       </div>
       <div>
-        <h2>Posts:</h2>
+       
         {posts.map((post) => (
           <Post
             username={post.userData.userData.username}
