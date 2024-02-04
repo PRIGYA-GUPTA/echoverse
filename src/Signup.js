@@ -1,104 +1,64 @@
-import { useState } from "react";
-import "./Signin.css";
-import { Link, useNavigate } from "react-router-dom";
-import { v4 } from "uuid";
-import logo from "./evLogo.png";
-import { imgDB, txtDB, auth } from "./firebase";
+import React, { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore"; // Ensure you import these functions
-
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-
-function SignUp({ values, setValues, setAvatar, avatar }) {
-  const [errorMsg, setErrorMsg] = useState(null);
+import { auth, db } from "./firebase";
+import { v4 } from "uuid";
+import { doc, setDoc } from "firebase/firestore";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useNavigate, Link } from "react-router-dom";
+import logo from "./evLogo.png";
+import { storage } from "./firebase";
+import "./Signin.css";
+function SignUp() {
+  const [err, setErr] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const username = e.target[0].value;
+    const displayname = e.target[1].value;
+    const email = e.target[2].value;
+    const password = e.target[3].value;
+    const avatar = e.target[4].files[0];
 
-  // const handleSubmission = async () => {
-  //   try {
-  //     const res = await createUserWithEmailAndPassword(
-  //       auth,
-  //       values.email,
-  //       values.password
-  //     );
-  //     const user = res.user;
+    try {
+      //Create user
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(auth);
+      //Create a unique image name
+      const date = new Date().getTime();
+      const randomId = v4();
+      const storageRef = ref(storage, `${displayname + randomId}`);
+      console.log(storageRef);
 
-  //     // Update user profile with additional information
-  //     await updateProfile(user, {
-  //       displayName: values.displayname,
-  //       photoURL: avatar,
-  //     });
+      await uploadBytesResumable(storageRef, avatar).then(() => {
+        getDownloadURL(storageRef).then(async (downloadURL) => {
+          try {
+            //Update profile
+            await updateProfile(res.user, {
+              displayName: displayname,
+              photoURL: downloadURL,
+            });
+            //create user on firestore
+            await setDoc(doc(db, "users", res.user.uid), {
+              uid: res.user.uid,
+              displayname,
+              email,
+              username,
+              photoURL: downloadURL,
+            });
 
-  //     // Save additional user information to Firestore
-  //     const userRef = collection(txtDB, "users"); // Reference to the 'users' collection
-  //     await addDoc(userRef, {
-  //       userId: user.uid,
-  //       email: values.email,
-  //       username: values.username,
-  //       displayname: values.displayname,
-  //       avatar: avatar,
-  //     });
-
-  //     navigate("/signin");
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };//baad
-  const handleSubmission = () => {
-    console.log(values.username, values.displayname, avatar);
-    if (!values.username || !values.displayname || !avatar) {
-      setErrorMsg("Please fill all the fields");
-      return; // Do not proceed with signup if any field is empty
-    }
-    createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then(async (res) => {
-        const user = res.user;
-        await updateProfile(user, {
-          displayName: values.displayname,
+            navigate("/home");
+          } catch (err) {
+            console.log(err);
+            setErr(true);
+            setLoading(false);
+          }
         });
-
-        handleClick();
-
-        navigate("/signin");
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        // Reset error message to null after signing up (success or failure)
-        setErrorMsg(null);
-        setAvatar(null);
-        setValues((prev) => ({
-          ...prev,
-          username: null,
-          displayname: null,
-        }));
       });
-
-    // } else {
-    //   setErrorMsg("Please fill all the fields");
-    // }
-  };
-  const handleUpload = (e, type) => {
-    const file = e.target.files[0];
-    const storageRef = ref(imgDB, `Imgs//${auth.currentUser.uid}`);
-
-    uploadBytes(storageRef, file).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        if (type === "avatar") {
-          setAvatar(url); // Set the avatar image URL
-        }
-      });
-    });
-  };
-
-  const handleClick = async () => {
-    const valRef = collection(txtDB, "users");
-    await addDoc(valRef, {
-      email: values.email,
-      displayname: values.displayname,
-      username: values.username,
-      avatarURL: avatar,
-    });
+    } catch (err) {
+      setErr(true);
+      setLoading(false);
+    }
   };
 
   return (
@@ -108,85 +68,72 @@ function SignUp({ values, setValues, setAvatar, avatar }) {
         className="sidebar__evIcon"
         style={{ marginTop: "1rem" }}
       ></img>
-      <div className="sign">
-        <div className="signincon">
-          <div className="signdiv">
-            <h1>Sign Up</h1>
-            <label>User Name</label>
-            <br></br>
-            <input
-              type="text"
-              className="email1"
-              placeholder="Enter your name"
-              onChange={(e) =>
-                setValues((prev) => ({
-                  ...prev,
-                  username: e.target.value,
-                }))
-              }
-              required
-            ></input>
-            <br></br>
-            <label>Display Name</label>
-            <br></br>
-            <input
-              type="text"
-              className="email1"
-              placeholder="Enter your display name"
-              onChange={(e) =>
-                setValues((prev) => ({
-                  ...prev,
-                  displayname: e.target.value,
-                }))
-              }
-              required
-            ></input>
-            <br></br>
-            <label>Email</label>
-            <br></br>
-            <input
-              type="email"
-              placeholder="Enter email address"
-              className="email1"
-              onChange={(e) =>
-                setValues((prev) => ({ ...prev, email: e.target.value }))
-              }
-            ></input>
-            <br></br>
-            <label>Password</label>
-            <br></br>
-            <input
-              type="password"
-              placeholder="Enter password"
-              className="email1"
-              onChange={(e) =>
-                setValues((prev) => ({ ...prev, password: e.target.value }))
-              }
-            ></input>
-            <br></br>
-            <label>Avatar</label>
-            <br />
-            <input type="file" onChange={(e) => handleUpload(e, "avatar")} />
-            <br />
-            <span style={{ color: "red" }}>
-              {errorMsg ? <span>{errorMsg}</span> : " "}
-            </span>
-            <button
-              className="signbutton"
-              type="submit"
-              onClick={handleSubmission}
-            >
-              Signup
-            </button>
-            <p style={{ color: "#fff", marginTop: "10px" }}>
-              Already have an account?
-              <Link to="/signin" style={{ color: "white" }}>
-                SignIn Now
-              </Link>
-            </p>
+      <form onSubmit={handleSubmit}>
+        <div className="sign">
+          <div className="signincon">
+            <div className="signdiv">
+              <h1>Sign Up</h1>
+              <label htmlFor="username" style={{ paddingBottom: "10px" }}>
+                User Name
+              </label>
+              <br></br>
+              <input
+                type="text"
+                className="email1"
+                id="username"
+                placeholder="Enter your name"
+                required
+              ></input>
+              <br></br>
+              <label htmlFor="displayname">Display Name</label>
+              <br></br>
+              <input
+                type="text"
+                className="email1"
+                id="displayname"
+                placeholder="Enter your display name"
+                required
+              ></input>
+              <br></br>
+              <label htmlFor="email">Email</label>
+              <br></br>
+              <input
+                type="email"
+                id="email"
+                placeholder="Enter email address"
+                className="email1"
+              ></input>
+              <br></br>
+              <label htmlFor="password">Password</label>
+              <br></br>
+              <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                className="email1"
+              ></input>
+              <br></br>
+              <label htmlFor="ava">Avatar</label>
+              <br />
+              <input type="file" id="ava" />
+              <br />
+              <span style={{ color: "red" }}>
+                {err ? <span>Something went wrong</span> : " "}
+              </span>
+              <button className="signbutton" type="submit">
+                Signup
+              </button>
+
+              <p style={{ color: "#fff", marginTop: "10px" }}>
+                Already have an account?
+                <Link to="/signin" style={{ color: "white" }}>
+                  SignIn Now
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

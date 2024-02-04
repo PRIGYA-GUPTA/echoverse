@@ -19,11 +19,11 @@ function Post({ displayname, username, verified, text, image, avatar }) {
         </div>
         <div className="post__content">
           <div className="post__header">
-            <div>
+            <div style={{ display: "flex" }}>
               <h3>{displayname}</h3>
+              <span style={{ paddingTop: "0.3rem" }}>@{username}</span>
             </div>
             <div>
-              <span>@{username}</span>
               {verified && <VerifiedOutlined style={{ color: "blue" }} />}
             </div>
           </div>
@@ -33,7 +33,14 @@ function Post({ displayname, username, verified, text, image, avatar }) {
         </div>
       </div>
       <div>
-        {image && <img src={image} height="400px" width="600px"></img>}
+        {image && (
+          <img
+            src={image}
+            height="400px"
+            width="600px"
+            style={{ objectFit: "contain" }}
+          ></img>
+        )}
         <div className="post__footer">
           <ChatBubbleOutlineIcon fontSize="small" />
           <RepeatIcon fontSize="small" />
